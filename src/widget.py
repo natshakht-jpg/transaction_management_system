@@ -1,6 +1,7 @@
 # Импортируем функции маскировки из модуля masks
 from src.masks import get_mask_account, get_mask_card_number
 
+
 def mask_account_card(data: str) -> str:
     """Функция обрабатывает информацию о картах и счетах и
     возвращает строку с замаскированным номером"""
@@ -12,7 +13,7 @@ def mask_account_card(data: str) -> str:
         # Для счета возвращаем "Счет" + маскированный номер
     else:
         card_name = ' '.join(parts[:-1])
-        # Объединяем все элементы кроме последнего в название карты
+        # Объединяем все элементы, кроме последнего, в название карты
         card_number = parts[-1]
         # Берем последний элемент как номер карты
         masked_number = get_mask_card_number(int(card_number))
