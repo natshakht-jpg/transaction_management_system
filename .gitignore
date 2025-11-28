@@ -14,3 +14,7 @@ __pycache__/
 
 # Logs
 *.log
+
+htmlcov/
+.coverage
+.pytest_cache/
