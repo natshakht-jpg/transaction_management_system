@@ -1,5 +1,6 @@
 import pytest
-from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
+
+from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
 
 
 # ФИКСТУРЫ
@@ -7,21 +8,9 @@ from src.generators import filter_by_currency, transaction_descriptions, card_nu
 def sample_transactions():
     """Фикстура с тестовыми транзакциями для генераторов"""
     return [
-        {
-            "id": 1,
-            "operationAmount": {"currency": {"code": "USD"}},
-            "description": "Перевод организации"
-        },
-        {
-            "id": 2,
-            "operationAmount": {"currency": {"code": "USD"}},
-            "description": "Перевод со счета на счет"
-        },
-        {
-            "id": 3,
-            "operationAmount": {"currency": {"code": "RUB"}},
-            "description": "Перевод со счета на счет"
-        }
+        {"id": 1, "operationAmount": {"currency": {"code": "USD"}}, "description": "Перевод организации"},
+        {"id": 2, "operationAmount": {"currency": {"code": "USD"}}, "description": "Перевод со счета на счет"},
+        {"id": 3, "operationAmount": {"currency": {"code": "RUB"}}, "description": "Перевод со счета на счет"},
     ]
 
 
@@ -56,8 +45,8 @@ def test_filter_by_currency_empty(sample_transactions):
 def test_filter_by_currency_is_generator(sample_transactions):
     """Тест, что функция возвращает генератор"""
     generator = filter_by_currency(sample_transactions, "USD")
-    assert hasattr(generator, '__iter__')
-    assert hasattr(generator, '__next__')
+    assert hasattr(generator, "__iter__")
+    assert hasattr(generator, "__next__")
 
 
 def test_filter_by_currency_empty_list():
@@ -73,11 +62,7 @@ def test_transaction_descriptions(sample_transactions):
     generator = transaction_descriptions(sample_transactions)
     result = list(generator)
 
-    assert result == [
-        "Перевод организации",
-        "Перевод со счета на счет",
-        "Перевод со счета на счет"
-    ]
+    assert result == ["Перевод организации", "Перевод со счета на счет", "Перевод со счета на счет"]
 
 
 def test_transaction_descriptions_generator_behavior(sample_transactions):
@@ -100,11 +85,14 @@ def test_transaction_descriptions_empty_list():
 
 
 # ТЕСТЫ ДЛЯ card_number_generator
-@pytest.mark.parametrize("start, end, expected", [
-    (1, 3, ["0000 0000 0000 0001", "0000 0000 0000 0002", "0000 0000 0000 0003"]),
-    (9997, 9999, ["0000 0000 0000 9997", "0000 0000 0000 9998", "0000 0000 0000 9999"]),
-    (42, 42, ["0000 0000 0000 0042"]),
-])
+@pytest.mark.parametrize(
+    "start, end, expected",
+    [
+        (1, 3, ["0000 0000 0000 0001", "0000 0000 0000 0002", "0000 0000 0000 0003"]),
+        (9997, 9999, ["0000 0000 0000 9997", "0000 0000 0000 9998", "0000 0000 0000 9999"]),
+        (42, 42, ["0000 0000 0000 0042"]),
+    ],
+)
 def test_card_number_generator_ranges(start, end, expected):
     """Параметризованный тест для разных диапазонов"""
     generator = card_number_generator(start, end)
@@ -118,7 +106,7 @@ def test_card_number_generator_format():
     result = next(generator)
 
     assert len(result) == 19  # 16 цифр + 3 пробела
-    assert result.count(' ') == 3
+    assert result.count(" ") == 3
     assert result == "1234 5678 9012 3456"
 
 
@@ -136,8 +124,8 @@ def test_card_number_generator_edge_cases():
 def test_card_number_generator_is_generator():
     """Тест, что это действительно генератор"""
     gen = card_number_generator(1, 5)
-    assert hasattr(gen, '__iter__')
-    assert hasattr(gen, '__next__')
+    assert hasattr(gen, "__iter__")
+    assert hasattr(gen, "__next__")
 
     # Проверяем ленивое вычисление
     first = next(gen)

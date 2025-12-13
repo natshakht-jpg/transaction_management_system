@@ -44,7 +44,7 @@ exclude = '''
 
 [tool.isort]
 line_length = 119
-lines_after_imports = 1
+lines_after_imports = 2
 
 [tool.mypy]
 disallow_untyped_defs = true

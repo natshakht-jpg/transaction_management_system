@@ -1,5 +1,8 @@
-def filter_by_currency(transactions, currency_code):
-    """ Фильтрует транзакции по валюте. Возвращает генератор.
+from typing import Any, Dict, Iterator, List
+
+
+def filter_by_currency(transactions: List[Dict[str, Any]], currency_code: str) -> Iterator[Dict[str, Any]]:
+    """Фильтрует транзакции по валюте. Возвращает генератор.
 
     Аргументы:
         transactions: список транзакций (словарей)
@@ -19,7 +22,7 @@ def filter_by_currency(transactions, currency_code):
             yield transaction
 
 
-def transaction_descriptions(transactions):
+def transaction_descriptions(transactions: List[Dict[str, Any]]) -> Iterator[str]:
     """Возвращает генератор описаний транзакций.
 
     Аргументы:
@@ -33,18 +36,18 @@ def transaction_descriptions(transactions):
         # Возвращаем описание текущей транзакции
         # yield приостанавливает функцию и возвращает значение
         # При следующем вызове next() функция продолжит со следующей транзакции
-        yield transaction['description']
+        yield transaction["description"]
 
 
-def card_number_generator(start, end):
-    """ Генератор номеров банковских карт.
+def card_number_generator(start: int, end: int) -> Iterator[str]:
+    """Генератор номеров банковских карт.
 
-    Аргументы:
-        start (int): начальный номер (минимально 1)
-        end (int): конечный номер (максимально 9999 9999 9999 9999)
+     Аргументы:
+         start (int): начальный номер (минимально 1)
+         end (int): конечный номер (максимально 9999 9999 9999 9999)
 
-   Возвращает:
-        str: номера карт в заданном диапазоне"""
+    Возвращает:
+         str: номера карт в заданном диапазоне"""
     # Перебираем все числа от start до end
     # +1 потому что range не включает последнее число
     for number in range(start, end + 1):
