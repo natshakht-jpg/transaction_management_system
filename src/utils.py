@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 
 def load_transactions(file_path: str) -> list:
@@ -27,7 +27,7 @@ def load_transactions(file_path: str) -> list:
             data = json.load(f)
 
             # 4. Проверяем, что загруженные данные являются списком
-            if type(data) == list:
+            if isinstance(data, list):
                 return data
             else:
                 return []
