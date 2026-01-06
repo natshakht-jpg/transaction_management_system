@@ -168,6 +168,77 @@ transactions = [
 ]
 ```
 
+##  Конвертация валют
+
+Новые модули для работы с JSON и конвертации валют.
+
+### Использование
+
+```python
+from src.utils import load_transactions
+from src.external_api import convert_to_rub
+
+# Загрузка транзакций из файла
+transactions = load_transactions("data/operations.json")
+print(f"Загружено транзакций: {len(transactions)}")
+
+# Конвертация первой транзакции
+if transactions:
+    first_transaction = transactions[0]
+    amount_rub = convert_to_rub(first_transaction)
+    print(f"Сумма в рублях: {amount_rub}")
+```
+
+### Функции
+#### `load_transactions(file_path: str) -> List[Dict]`
+Загружает транзакции из JSON-файла.
+
+- file_path: путь к JSON-файлу
+
+- Возвращает: список словарей с транзакциями или пустой список, если файл не найден, пустой или содержит не список
+
+#### `convert_to_rub(transaction: Dict) -> float`
+Конвертирует сумму транзакции в рубли.
+
+- transaction: словарь с транзакцией (должен содержать ключи `amount` и `currency`)
+
+- Возвращает: сумму в рублях (float)
+
+- Особенности: для USD и EUR делает запрос к внешнему API (Exchange Rates Data API)
+
+#### `get_exchange_rate(from_currency: str, to_currency: str = "RUB") -> float`
+Получает текущий курс валюты через API.
+
+- from_currency: исходная валюта (например, "USD")
+
+- to_currency: целевая валюта (по умолчанию "RUB")
+
+- Возвращает: курс обмена (float) или 0.0 при ошибке
+
+### Переменные окружения
+Создайте файл `.env` на основе `.env.template`:
+
+```
+EXCHANGE_RATE_API_KEY=ваш_ключ_здесь
+DEBUG=True
+```
+
+### Тестирование новых функций
+
+```
+# Тесты для конвертации валют
+pytest tests/test_external_api.py -v
+
+# Тесты для работы с JSON
+pytest tests/test_utils.py -v
+
+# Проверка типов
+mypy src/external_api.py src/utils.py
+
+# Проверка стиля кода
+flake8 src/external_api.py src/utils.py tests/test_external_api.py tests/test_utils.py
+```
+
 ## Тестирование
 Проект покрыт комплексными тестами с использованием pytest. Для запуска тестов:
 ```bash
@@ -180,8 +251,8 @@ pytest --cov=src --cov-report=term-missing
 # Генерация HTML отчета
 pytest --cov=src --cov-report=html
 ```
-**Покрытие тестами:** 100%
-**Количество тестов:** 52
+**Покрытие тестами:** 100% (все функции)
+**Количество тестов:** 64 (добавлено 12 новых тестов)
 
 ## Документация
 Дополнительную информацию о структуре проекта и функциях можно найти в [документации Python](https://docs.python.org/3/).
