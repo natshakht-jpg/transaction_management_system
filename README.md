@@ -110,6 +110,191 @@ except ZeroDivisionError:
 ### Параметры
 
 - `filename` (опциональный): имя файла для записи логов. Если не указан - вывод в консоль.
+=======
+## Модуль генераторов
+
+Новый модуль `src/generators.py` содержит функции для работы с банковскими транзакциями.
+
+### Примеры использования:
+
+```python
+from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
+
+# Пример данных транзакций (для демонстрации)
+transactions = [
+    {
+        "id": 939719570,
+        "state": "EXECUTED",
+        "date": "2018-06-30T02:08:58.425572",
+        "operationAmount": {
+            "amount": "9824.07",
+            "currency": {"name": "USD", "code": "USD"}
+        },
+        "description": "Перевод организации",
+        "from": "Счет 75106830613657916952",
+        "to": "Счет 11776614605963066702"
+    }
+]
+
+# 1. Фильтрация транзакций по валюте
+usd_transactions = filter_by_currency(transactions, "USD")
+for transaction in usd_transactions:
+    print(f"ID: {transaction['id']}, Сумма: {transaction['operationAmount']['amount']}")
+
+# 2. Получение описаний транзакций
+descriptions = transaction_descriptions(transactions)
+for description in descriptions:
+    print(description)
+
+# 3. Генерация номеров карт
+card_numbers = card_number_generator(1, 5)
+for card in card_numbers:
+    print(card)
+# Вывод:
+# 0000 0000 0000 0001
+# 0000 0000 0000 0002
+# 0000 0000 0000 0003
+# 0000 0000 0000 0004
+# 0000 0000 0000 0005
+```
+
+### Пример входных данных (полный список для тестирования):
+
+```python
+transactions = [
+    {
+        "id": 939719570,
+        "state": "EXECUTED",
+        "date": "2018-06-30T02:08:58.425572",
+        "operationAmount": {
+            "amount": "9824.07",
+            "currency": {"name": "USD", "code": "USD"}
+        },
+        "description": "Перевод организации",
+        "from": "Счет 75106830613657916952",
+        "to": "Счет 11776614605963066702"
+    },
+    {
+        "id": 142264268,
+        "state": "EXECUTED",
+        "date": "2019-04-04T23:20:05.206878",
+        "operationAmount": {
+            "amount": "79114.93",
+            "currency": {"name": "USD", "code": "USD"}
+        },
+        "description": "Перевод со счета на счет",
+        "from": "Счет 19708645243227258542",
+        "to": "Счет 75651667383060284188"
+    },
+    {
+        "id": 873106923,
+        "state": "EXECUTED",
+        "date": "2019-03-23T01:09:46.296404",
+        "operationAmount": {
+            "amount": "43318.34",
+            "currency": {"name": "руб.", "code": "RUB"}
+        },
+        "description": "Перевод со счета на счет",
+        "from": "Счет 44812258784861134719",
+        "to": "Счет 74489636417521191160"
+    },
+    {
+        "id": 895315941,
+        "state": "EXECUTED",
+        "date": "2018-08-19T04:27:37.904916",
+        "operationAmount": {
+            "amount": "56883.54",
+            "currency": {"name": "USD", "code": "USD"}
+        },
+        "description": "Перевод с карты на карту",
+        "from": "Visa Classic 6831982476737658",
+        "to": "Visa Platinum 8990922113665229"
+    },
+    {
+        "id": 594226727,
+        "state": "CANCELED",
+        "date": "2018-09-12T21:27:25.241689",
+        "operationAmount": {
+            "amount": "67314.70",
+            "currency": {"name": "руб.", "code": "RUB"}
+        },
+        "description": "Перевод организации",
+        "from": "Visa Platinum 1246377376343588",
+        "to": "Счет 14211924144426031657"
+    }
+]
+```
+
+##  Конвертация валют
+
+Новые модули для работы с JSON и конвертации валют.
+
+### Использование
+
+```python
+from src.utils import load_transactions
+from src.external_api import convert_to_rub
+
+# Загрузка транзакций из файла
+transactions = load_transactions("data/operations.json")
+print(f"Загружено транзакций: {len(transactions)}")
+
+# Конвертация первой транзакции
+if transactions:
+    first_transaction = transactions[0]
+    amount_rub = convert_to_rub(first_transaction)
+    print(f"Сумма в рублях: {amount_rub}")
+```
+
+### Функции
+#### `load_transactions(file_path: str) -> List[Dict]`
+Загружает транзакции из JSON-файла.
+
+- file_path: путь к JSON-файлу
+
+- Возвращает: список словарей с транзакциями или пустой список, если файл не найден, пустой или содержит не список
+
+#### `convert_to_rub(transaction: Dict) -> float`
+Конвертирует сумму транзакции в рубли.
+
+- transaction: словарь с транзакцией (должен содержать ключи `amount` и `currency`)
+
+- Возвращает: сумму в рублях (float)
+
+- Особенности: для USD и EUR делает запрос к внешнему API (Exchange Rates Data API)
+
+#### `get_exchange_rate(from_currency: str, to_currency: str = "RUB") -> float`
+Получает текущий курс валюты через API.
+
+- from_currency: исходная валюта (например, "USD")
+
+- to_currency: целевая валюта (по умолчанию "RUB")
+
+- Возвращает: курс обмена (float) или 0.0 при ошибке
+
+### Переменные окружения
+Создайте файл `.env` на основе `.env.template`:
+
+```
+EXCHANGE_RATE_API_KEY=ваш_ключ_здесь
+DEBUG=True
+```
+
+### Тестирование новых функций
+
+```
+# Тесты для конвертации валют
+pytest tests/test_external_api.py -v
+
+# Тесты для работы с JSON
+pytest tests/test_utils.py -v
+
+# Проверка типов
+mypy src/external_api.py src/utils.py
+
+# Проверка стиля кода
+flake8 src/external_api.py src/utils.py tests/test_external_api.py tests/test_utils.py
+```
 
 ## Тестирование
 
