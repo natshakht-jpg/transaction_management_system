@@ -54,6 +54,63 @@ filtered_operations = filter_by_state(operations, 'EXECUTED')
 sorted_operations = sort_by_date(operations)
 ```
 
+## Декоратор log
+
+Декоратор для автоматического логирования вызовов функций. Автоматически логирует успешное выполнение функций и ошибки.
+
+### Импорт
+
+```python
+from src.decorators import log
+```
+
+### Примеры использования
+
+#### Логирование в консоль
+
+```python
+@log()
+def add(a: int, b: int) -> int:
+    """Складывает два числа."""
+    return a + b
+
+result = add(5, 3)  # В консоль: "add ok"
+```
+
+#### Логирование в файл
+
+```python
+@log(filename="operations.log")
+def multiply(x: int, y: int) -> int:
+    """Умножает два числа."""
+    return x * y
+
+result = multiply(4, 6)  # В файл operations.log: "multiply ok"
+```
+
+#### Логирование ошибок
+
+```python
+@log()
+def divide(a: int, b: int) -> float:
+    """Делит a на b."""
+    return a / b
+
+try:
+    divide(10, 0)
+except ZeroDivisionError:
+    pass  # В консоль: "divide error: ZeroDivisionError. Inputs: (10, 0)"
+```
+
+### Формат логов
+
+- **При успешном выполнении**: `имя_функции ok`
+- **При ошибке**: `имя_функции error: ТипОшибки. Inputs: (аргументы)`
+
+### Параметры
+
+- `filename` (опциональный): имя файла для записи логов. Если не указан - вывод в консоль.
+=======
 ## Модуль генераторов
 
 Новый модуль `src/generators.py` содержит функции для работы с банковскими транзакциями.
@@ -240,7 +297,9 @@ flake8 src/external_api.py src/utils.py tests/test_external_api.py tests/test_ut
 ```
 
 ## Тестирование
+
 Проект покрыт комплексными тестами с использованием pytest. Для запуска тестов:
+
 ```bash
 # Запуск всех тестов
 pytest
@@ -251,8 +310,9 @@ pytest --cov=src --cov-report=term-missing
 # Генерация HTML отчета
 pytest --cov=src --cov-report=html
 ```
-**Покрытие тестами:** 100% (все функции)
-**Количество тестов:** 64 (добавлено 12 новых тестов)
+
+- **Покрытие тестами:** 100%
+- **Все тесты проходят успешно**
 
 ## Документация
 Дополнительную информацию о структуре проекта и функциях можно найти в [документации Python](https://docs.python.org/3/).
