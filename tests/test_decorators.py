@@ -1,5 +1,6 @@
-import pytest
 import os
+
+import pytest
 
 from src.decorators import log
 
@@ -81,7 +82,7 @@ def test_log_with_different_arguments(capsys):
     def process_data(name, count=1, enabled=True):
         return f"{name} * {count}"
 
-    result = process_data("test", 3, enabled=False)
+    process_data("test", 3, enabled=False)
     captured = capsys.readouterr()
     assert "process_data ok\n" == captured.out
 
