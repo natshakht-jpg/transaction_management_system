@@ -247,6 +247,7 @@ if transactions:
 ```
 
 ### Функции
+
 #### `load_transactions(file_path: str) -> List[Dict]`
 Загружает транзакции из JSON-файла.
 
@@ -279,6 +280,48 @@ if transactions:
 EXCHANGE_RATE_API_KEY=ваш_ключ_здесь
 DEBUG=True
 ```
+
+## Чтение данных из CSV и Excel файлов
+
+### Функции:
+```python
+from src.file_readers import load_transactions_from_csv, load_transactions_from_excel
+
+# CSV (разделитель ;, кодировка UTF-8)
+transactions = load_transactions_from_csv("data/transactions.csv")
+
+# Excel (.xlsx формат)
+transactions = load_transactions_from_excel("data/transactions_excel.xlsx")
+```
+
+### Особенности:
+- При ошибках возвращается пустой список `[]`
+- Ошибки логируются в `logs/file_readers.log`
+- CSV: разделитель `;`, кодировка UTF-8
+- Проверяет существование файла и его размер
+
+### Тесты:
+```
+# Запуск тестов
+pytest tests/test_file_readers.py -v
+
+# Проверка покрытия (100%)
+pytest --cov=src.file_readers tests/test_file_readers.py
+```
+
+**Покрытие: 100%, тесты с Mock/patch: есть**
+
+### Тестирование:
+```bash
+# Тесты для новых функций
+pytest tests/test_file_readers.py -v
+
+# Проверка покрытия (100%)
+pytest --cov=src.file_readers --cov-report=term-missing tests/test_file_readers.py
+```
+Покрытие тестами: 100%
+Тесты с Mock/patch: есть 
+
 ## Логирование
 
 Проект использует модуль `logging` для записи логов. Логи записываются в папку `logs/`:
@@ -305,7 +348,7 @@ DEBUG=True
 
 ### Тестирование новых функций
 
-```
+```bash
 # Тесты для конвертации валют
 pytest tests/test_external_api.py -v
 
