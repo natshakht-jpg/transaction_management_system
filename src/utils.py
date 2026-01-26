@@ -3,6 +3,9 @@ import logging  # Импортируем библиотеки logging
 import os
 
 
+# Создаем директорию для лог-файлов (если отсутствует)
+os.makedirs('logs', exist_ok=True)
+
 # Логер для модуля utils
 logger = logging.getLogger(__name__)
 

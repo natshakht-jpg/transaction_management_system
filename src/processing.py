@@ -7,7 +7,8 @@ def filter_by_state(operations: list[dict], state: str = "EXECUTED") -> list[dic
     """
     filtered_operations = []  # Создаем пустой список для отфильтрованных операций
     for operation in operations:  # Перебираем каждую операцию в списке
-        if operation["state"] == state:  # Если статус операции совпадает с искомым
+        if "state" in operation and operation["state"] == state:  # Проверяем, что ключ
+            # "state" существует и равен нужному значению
             filtered_operations.append(operation)  # Добавляем операцию в результат
     return filtered_operations  # Возвращаем отфильтрованный список
 
