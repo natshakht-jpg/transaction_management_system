@@ -319,6 +319,29 @@ mypy src/external_api.py src/utils.py
 flake8 src/external_api.py src/utils.py tests/test_external_api.py tests/test_utils.py
 ```
 
+## Работа с регулярными выражениями и категориями операций
+
+### Использование
+Пример использования новых функций:
+from src.bank_operations import process_bank_search, process_bank_operations
+transactions = [{"description": "Открытие вклада", "state": "EXECUTED"}]
+found_transactions = process_bank_search(transactions, "вклад")
+category_counts = process_bank_operations(transactions, ["Открытие вклада"])
+
+### Функции
+#### process_bank_search(data: List[Dict], search: str) -> List[Dict]
+Поиск транзакций по описанию с использованием регулярных выражений.
+
+#### process_bank_operations(data: List[Dict], categories: List[str]) -> Dict[str, int]
+Подсчет операций по категориям с использованием Counter.
+
+### Основной модуль main.py
+Реализован пользовательский интерфейс с выбором файла, фильтрацией по статусу, сортировкой, поиском по описанию.
+
+### Тестирование
+Запуск: pytest tests/test_bank_operations.py
+Покрытие: 100%
+
 ## Тестирование
 
 Проект покрыт комплексными тестами с использованием pytest. Для запуска тестов:
